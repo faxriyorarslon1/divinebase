@@ -215,7 +215,7 @@ class RegistrationModelViewSet(ModelViewSet):
 
     @action(methods=['post'], detail=False)
     def mobile_login(self, request):
-        phone_number = self.request.query_params.get('phone_number')
+        phone_number = request.data.get('phone_number')
         new_phone_number = phone_number if phone_number[0] == '+' else f'+{phone_number[1:]}'
         user = User.objects.filter(phone_number=str(new_phone_number)).first()
         if not user:
@@ -228,13 +228,14 @@ class RegistrationModelViewSet(ModelViewSet):
         # LOCAL = "http://127.0.0.1:8000/"
         # BASE = "https://dzokirov20.pythonanywhere.com/"
         token, _ = Token.objects.get_or_create(user=user)
-        text = f"Marxamat sizga Link berildi o'sha link orqali logindan o'tishingiz mumkin \n<a href='https://dilshod22.pythonanywhere.com/version1/index?token={token}'><b>Mobile Appga O'tish</b></a>"
+        text = f"Marxamat sizga havola berildi berilgan havola orqali mobil ilovamizga o'tishingiz mumkin \n<a href='https://divines.uz/version1/index?token={token}'><b>Mobile Appga O'tish</b></a>"
         url = f'https://api.telegram.org/bot5562028031:AAHhwjOM66h1ZKZxfq3naS77PZwq7_3a7BM/sendMessage?chat_id={user.chat_id}&parse_mode=HTML&text={text}'
         try:
+
             requests.post(url)
             return Response(
                 {
-                    "message": "Muoffaqiyatli yakunlandi",
+                    "message": "Muvaffaqiyatli yakunlandi",
                     "url": 'https://telegram.me/future_world_group_bot/'
                 }
             )
@@ -244,6 +245,20 @@ class RegistrationModelViewSet(ModelViewSet):
                     "message": "Sizda telegramda muommo bor"
                 }
             )
+
+        # https: // api.telegram.org / botXXtokenxx / sendMessage?chat_id = chat_id & text = text
+
+    @action(methods=['post'], detail=False)
+    def register(self, request):
+        serializer = RegistrationSerializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
+        serializer.save()
+        return Response(
+            {"message": {
+                "uz": "Muvaffaqiyatli ro'yxatdan o'tdingiz",
+                "уз": "Муваффақиятли рўйхатдан ўтдингиз",
+                "ru": "Вы успешно зарегистрированы",
+            }})
 
     # https: // api.telegram.org / botXXtokenxx / sendMessage?chat_id = chat_id & text = text
     @action(methods=['post'], detail=False)

@@ -1,4 +1,4 @@
-#!/home/dilshod/DivineBase/baseenv/bin/python3
+#!/var/www/divinebase/baseenv/bin/python
 # -*- coding: utf-8 -*-
 import re
 import sys
