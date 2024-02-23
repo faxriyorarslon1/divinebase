@@ -77,30 +77,49 @@ class MobileLocationModelViewSet(ModelViewSet):
                     self.queryset = MobileLocation.objects.filter(created_by=user).all()
                 else:
                     self.queryset = MobileLocation.objects.all()
-
-        user_count = User.objects.all().count()
+        if district and start and end:
+            self.queryset = MobileLocation.objects.filter(created_at__gte=start,
+                                                          created_at__lte=end or str(
+                                                              datetime.datetime.now()), district=district)
+            print(self.queryset)
+            print(district, start, end)
+            # serializer = LocationDaySerializer(self.queryset, many=True)
+            # data = {
+            #     'results': serializer.data,
+            #     'message': {
+            #         'status': '200',
+            #         'language': {
+            #             'uz': 'Hammasi ajoyib',
+            #             'ru': 'Все отлично',
+            #             'cyr': 'Ҳаммаси ажойиб'
+            #         }
+            #     }
+            # }
+            # return Response(data)
+        users = User.objects.all()
         serializer = LocationDaySerializer(self.queryset, many=True)
         data_list = []
         first = 0
         last = len(serializer.data)
-        first_user = 1
-        for u in range(0, user_count + 1):
+        # first_user = 1
+        for user in users:
             n_first = 0
             user_dict = {}
             user_all_data = []
             while n_first < last:
-                if first_user == serializer.data[n_first].get('created_by').get('id'):
+                if user.id == serializer.data[n_first].get('created_by').get('id'):
                     user_lan = {'lan': serializer.data[n_first].get('lan'),
                                 'lat': serializer.data[n_first].get('lat'),
                                 'created_at': serializer.data[n_first].get('created_at')}
                     user_dict = {'created_by': serializer.data[n_first].get('created_by')}
                     user_all_data.append(user_lan)
+                    print(user_all_data, "user_all_data")
                 n_first += 1
             if user_dict and user_all_data:
                 if len(user_all_data) != 0:
                     user_dict['location'] = user_all_data
                 data_list.append(user_dict)
-            first_user += 1
+            # first_user += 1
         if len(serializer.data) == 0:
             data = {
                 'results': serializer.data,

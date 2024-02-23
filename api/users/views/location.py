@@ -26,11 +26,35 @@ class LocationModelViewSet(ModelViewSet):
         return super(LocationModelViewSet, self).create(request, *args, **kwargs)
 
     @action(methods=['get'], detail=False)
+    def get_day_user_location(self, request):
+        year = self.request.query_params.get('year')
+        year = int(year)
+        day = self.request.query_params.get('day')
+        day = int(day)
+        user = self.request.query_params.get('user_id')
+        month = self.request.query_params.get('month')
+        month = int(month)
+        start_date = datetime.datetime(year=year, month=month, day=day, hour=0, minute=0,
+                                       second=0)
+        end_date = datetime.datetime(year=year, month=month, day=day, hour=23, minute=59,
+                                     second=59)
+        self.queryset = Location.objects.filter(created_at__gte=start_date,
+                                                created_at__lte=end_date,
+                                                created_by=user).all()
+        serializer = LocationDaySerializer(self.queryset, many=True)
+        return Response(serializer.data)
+
+    @action(methods=['get'], detail=False)
     def get_day_location(self, request):
         start = self.request.query_params.get('start')
         end = self.request.query_params.get('end')
         user = self.request.query_params.get('user')
         district = self.request.query_params.get('district')
+        day = self.request.query_params.get('day')
+        month = self.request.query_params.get('month')
+        user_id = self.request.query_params.get('user_id')
+        year = self.request.query_params.get('year')
+
         if start:
             start = f"{start} 00:00:00{str(datetime.datetime.now())[19:]}"
         if end:
@@ -65,6 +89,10 @@ class LocationModelViewSet(ModelViewSet):
                                                             ).all()
                 else:
                     self.queryset = Location.objects.all()
+        if day and month and user_id:
+            self.queryset = Location.objects.filter(created_by=user_id).filter(created_at__day=day,
+                                                                               created_at__month=month,
+                                                                               created_at__year=year)
         serializer = LocationDaySerializer(self.queryset, many=True)
         data = {
             'results': serializer.data,

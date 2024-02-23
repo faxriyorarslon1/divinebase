@@ -159,7 +159,8 @@ class WebOrderSerializer(ModelSerializer):
             'status',
             'comment',
             'total_price',
-            'type_price'
+            'type_price',
+            'created_date'
         ]
 
 
@@ -188,7 +189,7 @@ class WebOrderCreateSerializer(ModelSerializer):
     def create(self, validated_data):
         order_data = validated_data.pop('products')
         validated_data['seller'] = self.context['request'].user
-        validated_data['district'] = self.context['request'].user.district
+        # validated_data['district'] = self.context['request'].user.district
         order = Order.objects.create(**validated_data)
         for person in order_data:
             d = dict(person)

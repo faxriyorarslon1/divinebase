@@ -6,6 +6,7 @@ class WebProductSerializer(serializers.ModelSerializer):
     class Meta:
         model = Product
         fields = [
+            'id',
             "name",
             "composition",
             "count",
@@ -61,6 +62,7 @@ class ProductItemSerializer(serializers.ModelSerializer):
     class Meta:
         model = Product
         fields = [
+            'id',
             "name",
             'composition',
             'count',

@@ -228,7 +228,7 @@ class RegistrationModelViewSet(ModelViewSet):
         # LOCAL = "http://127.0.0.1:8000/"
         # BASE = "https://dzokirov20.pythonanywhere.com/"
         token, _ = Token.objects.get_or_create(user=user)
-        text = f"Marxamat sizga havola berildi berilgan havola orqali mobil ilovamizga o'tishingiz mumkin \n<a href='https://divines.uz/version1/index?token={token}'><b>Mobile Appga O'tish</b></a>"
+        text = f"Marxamat sizga havola berildi berilgan havola orqali mobil ilovamizga o'tishingiz mumkin \n<a href='http://divines.uz/version1/index?token={token}'><b>Mobile Appga O'tish</b></a>"
         url = f'https://api.telegram.org/bot5562028031:AAHhwjOM66h1ZKZxfq3naS77PZwq7_3a7BM/sendMessage?chat_id={user.chat_id}&parse_mode=HTML&text={text}'
         try:
 

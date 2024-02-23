@@ -169,5 +169,5 @@ class VizitSerializer(ModelSerializer):
         user = User.objects.get(id=user.id)
         district = user.district
         attrs['district'] = district
-        Vizit.objects.create(**attrs)
+        # Vizit.objects.create(**attrs)
         return attrs
