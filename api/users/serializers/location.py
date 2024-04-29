@@ -1,6 +1,6 @@
 from django.db import transaction
 from rest_framework import serializers
-
+from time import timezone
 from apps.users.models import Location, User, MobileLocation, District
 
 
@@ -82,7 +82,7 @@ class CreateMobileLocationSerializer(serializers.ModelSerializer):
         fields = [
             "lan",
             "lat",
-            'district',
+            "district",
             "created_by",
             "created_at",
         ]

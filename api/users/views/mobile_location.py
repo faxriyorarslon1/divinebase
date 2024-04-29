@@ -35,17 +35,77 @@ class MobileLocationModelViewSet(ModelViewSet):
         }
         return Response(data)
 
+    @action(methods=['post'], detail=False)
+    def create_locations_list(self, request):
+        if "user" in request.data.keys() and "location" in request.data.keys():
+            try:
+                user = request.data.get("user")
+                location = request.data.get("location")
+                for locat in location:
+                    lan = locat["lan"]
+                    lat = locat["lat"]
+                    created_at = locat["created_at"]
+                    request_data = {"created_by": user, "lan": lan, "lat": lat, "created_at": created_at}
+                    print(request_data)
+                    serializer = CreateMobileLocationSerializer(data=request_data)
+                    serializer.is_valid(raise_exception=True)
+                    serializer.save()
+                    # user = User.objects.get(id=user)
+                    # lan = locat["lan"]
+                    # lat = locat["lat"]
+                    # validated_data = {"created_by": 22, "district": user.district, "lan": lan, "lat": lat}
+                    # mobile_location = MobileLocation.objects.create(**validated_data)
+                    # mobile_location.save()
+                data = {
+                    'results': "Your data is created",
+                    'message': {
+                        'status': '200',
+                        'language': "en"
+
+                    }
+                }
+                return Response(data)
+            except Exception as e:
+                print(str(e))
+                data = {
+                    'results': str(e),
+                    'message': {
+                        'status': '400',
+                        'language': "ru"
+
+                    }
+                }
+                return Response(data)
+        data = {
+            'results': "Istagingizda xatolik bor",
+            'message': {
+                'status': '400',
+                'language': "uz"
+
+            }
+        }
+        return Response(data)
+
+
     @action(methods=['get'], detail=False)
     def get_day_location(self, request):
         start = self.request.query_params.get('start')
         end = self.request.query_params.get('end')
         user = self.request.query_params.get('user')
+        start_time = self.request.query_params.get('start_time')
+        end_time = self.request.query_params.get('end_time')
         district = self.request.query_params.get('district')
         self.queryset = MobileLocation.objects.all()
         if start:
-            start = f"{start} 00:00:00{str(datetime.datetime.now())[19:]}"
+            if start_time:
+                start = f"{start} {start_time}{str(datetime.datetime.now())[19:]}"
+            else:
+                start = f"{start} 00:00:00{str(datetime.datetime.now())[19:]}"
         if end:
-            end = f"{end} 23:59:59{str(datetime.datetime.now())[19:]}"
+            if end_time:
+                end = f"{end} {end_time}{str(datetime.datetime.now())[19:]}"
+            else:
+                end = f"{end} 23:59:59{str(datetime.datetime.now())[19:]}"
         if district:
             if start:
                 if user:
@@ -77,12 +137,12 @@ class MobileLocationModelViewSet(ModelViewSet):
                     self.queryset = MobileLocation.objects.filter(created_by=user).all()
                 else:
                     self.queryset = MobileLocation.objects.all()
-        if district and start and end:
-            self.queryset = MobileLocation.objects.filter(created_at__gte=start,
-                                                          created_at__lte=end or str(
-                                                              datetime.datetime.now()), district=district)
-            print(self.queryset)
-            print(district, start, end)
+        # if district and start and end:
+        #     self.queryset = MobileLocation.objects.filter(created_at__gte=start,
+        #                                                   created_at__lte=end or str(
+        #                                                       datetime.datetime.now()), district=district)
+        #     print(self.queryset)
+        #     print(district, start, end)
             # serializer = LocationDaySerializer(self.queryset, many=True)
             # data = {
             #     'results': serializer.data,
@@ -97,6 +157,10 @@ class MobileLocationModelViewSet(ModelViewSet):
             # }
             # return Response(data)
         users = User.objects.all()
+        if user:
+            users = User.objects.filter(id=user)
+        if user and district:
+            users = User.objects.filter(id=user, district=district)
         serializer = LocationDaySerializer(self.queryset, many=True)
         data_list = []
         first = 0
@@ -113,7 +177,6 @@ class MobileLocationModelViewSet(ModelViewSet):
                                 'created_at': serializer.data[n_first].get('created_at')}
                     user_dict = {'created_by': serializer.data[n_first].get('created_by')}
                     user_all_data.append(user_lan)
-                    print(user_all_data, "user_all_data")
                 n_first += 1
             if user_dict and user_all_data:
                 if len(user_all_data) != 0:

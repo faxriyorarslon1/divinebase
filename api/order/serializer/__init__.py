@@ -143,9 +143,19 @@ class OrderItemCreateOrderSerializer(ModelSerializer):
             "price"
         ]
 
+class OrderItemUserSerializer(ModelSerializer):
+    class Meta:
+        model = User
+        fields = [
+            'id',
+            'first_name',
+            'last_name'
+        ]
+
 
 class WebOrderSerializer(ModelSerializer):
     products = OrderItemOrderSerializer(many=True)
+    seller = OrderItemUserSerializer()
 
     class Meta:
         model = Order

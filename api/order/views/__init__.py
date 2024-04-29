@@ -6,6 +6,7 @@ from rest_framework.decorators import action
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 from rest_framework.viewsets import ModelViewSet
+from rest_framework.views import APIView
 
 from api.order.serializer import GetAllOrderSerializer, UpdateContractNumberSerializer, UpdateStatusSerializer, \
     CompanySerializer, UpdateCompanySerializer, UpdateHospitalVizitSerializer, WebCompanySerializer, \
@@ -13,7 +14,23 @@ from api.order.serializer import GetAllOrderSerializer, UpdateContractNumberSeri
     WebOrderUpdateSerializer
 from api.product.filter import ProductPaginationPage
 from apps.order.models import Order, Company
+import requests
+import json
 
+
+def requests_facture():
+    url = "https://account.faktura.uz/token"
+    grant_type = "password"
+    try:
+        reload = requests.post(url=url,
+                               data={"grant_type": grant_type, "username": "998909972900", "password": "fwgfactura",
+                                     "client_id": '998909972900',
+                                     "client_secret": "aCMaZxb8aN8RmOH7CuaEz76WUDKtaIKdzKNn0SKrPZJ4m0uebDkalukN8ngP"},
+                               headers={"Content-Type": "application/json"})
+
+        return json.loads(reload.text)
+    except Exception:
+        return {"message": "Error"}
 
 class OrderModelViewSet(ModelViewSet):
     permission_classes = [IsAuthenticated, ]
@@ -25,6 +42,29 @@ class OrderModelViewSet(ModelViewSet):
         self.queryset = Order.objects.filter(seller=request.user)
         self.serializer_class = GetAllOrderSerializer
         return super(OrderModelViewSet, self).list(request, *args, **kwargs)
+
+    @action(methods=['post'], detail=False)
+    def get_company(selfcdcnkdsjsnjcsnjs, request):
+        try:
+            if "stir" in request.data:
+                stir = request.data.get("stir")
+                url = f"https://api.faktura.uz/Api/Company/GetCompanyBasicDetails?companyInn={stir}"
+                facture = requests_facture()
+                if facture.get("message"):
+                    return {"message": "Error"}
+                access_token = facture['access_token']
+                reload = requests.get(url=url,
+                                      headers={"Authorization": f"Bearer {access_token}",
+                                               "Content-Type": "application/json"})
+                with open("data.json", 'w') as file:
+                    json.dump(json.loads(reload.text), file, indent=4)
+                    return Response(json.loads(reload.text))
+            return Response({"message": "stir field is required"})
+        except Exception as e:
+            return Response({"message": f"Error: {str(e)}"})
+
+
+
 
     @action(methods=['get'], detail=False)
     def status_order(self, request):
@@ -187,6 +227,15 @@ class WebOrderModelViewSet(ModelViewSet):
     def update(self, request, *args, **kwargs):
         self.serializer_class = WebOrderUpdateSerializer
         return super(WebOrderModelViewSet, self).update(request, *args, **kwargs)
+
+    @action(methods=['get'], detail=False)
+    def get_order_by_seller_id(self, request):
+        seller_id = self.request.query_params.get('seller_id')
+        orders = Order.objects.filter(seller_id=seller_id)
+        serializer = WebOrderSerializer(orders, many=True)
+        return Response(serializer.data)
+
+
 
     @action(methods=['get'], detail=False)
     def order_filter_region(self, request):

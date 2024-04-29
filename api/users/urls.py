@@ -13,7 +13,7 @@ from .views.location import LocationModelViewSet
 from .views.mobile_location import MobileLocationModelViewSet
 from .views.order_excel_lists import OrderExcelModelViewSet, DownloadView
 from .views.registration_views import RegistrationModelViewSet, VillageModelApiViewSet, UserModelViewSet
-from .views.version_view import VersionModelApiViewSet
+from .views.version_view import VersionModelApiViewSet, MobileAPIView
 from .views.vizit import VizitCreateAPI, VizitExcelApi
 
 router = DefaultRouter()
@@ -34,8 +34,11 @@ router.register('version', VersionModelApiViewSet)
 router.register('vizit_excel', VizitExcelApi)
 router.register('double_vizit_excel', DoubleVizitExcelModelViewSet)
 router.register('hospital_residue_excel', HospitalVizitExcelViewSet)
+# router.register('mobile_app', MobileAPIView)
+
 
 urlpatterns = [
     path('vizit_excel', DownloadView.as_view()),
+    path('mobile_app', MobileAPIView.as_view()),
     path("", include(router.urls))
 ]

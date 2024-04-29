@@ -72,31 +72,31 @@ class VizitCreateAPI(ModelViewSet):
             if end:
                 end = f"{end} 23:59:59{str(datetime.datetime.now())[19:]}"
             if user:
-                self.queryset = Vizit.objects.filter(user=user, district=district).all()
+                self.queryset = Vizit.objects.filter(user=user, district=district).all().order_by("-created_date")
                 if start:
                     self.queryset = Vizit.objects.filter(user=user, created_date__gte=start, district=district,
-                                                         created_date__lte=end or str(datetime.datetime.now())).all()
+                                                         created_date__lte=end or str(datetime.datetime.now())).all().order_by("-created_date")
             else:
-                self.queryset = Vizit.objects.filter(district=district).all()
+                self.queryset = Vizit.objects.filter(district=district).all().order_by("-created_date")
                 if start:
                     self.queryset = Vizit.objects.filter(created_date__gte=start, district=district,
-                                                         created_date__lte=end or str(datetime.datetime.now())).all()
+                                                         created_date__lte=end or str(datetime.datetime.now())).all().order_by("-created_date")
         else:
             if start:
                 start = f"{start} 00:00:00{str(datetime.datetime.now())[19:]}"
             if end:
                 end = f"{end} 23:59:59{str(datetime.datetime.now())[19:]}"
             if user:
-                self.queryset = Vizit.objects.filter(user=user).all()
+                self.queryset = Vizit.objects.filter(user=user).all().order_by("-created_date")
                 if start:
                     self.queryset = Vizit.objects.filter(user=user, created_date__gte=start,
                                                          created_date__lte=end or str(
-                                                             datetime.datetime.now())).all()
+                                                             datetime.datetime.now())).all().order_by("-created_date")
             else:
-                self.queryset = Vizit.objects.all()
+                self.queryset = Vizit.objects.all().order_by("-created_date")
                 if start:
                     self.queryset = Vizit.objects.filter(created_date__gte=start,
                                                          created_date__lte=end or str(
-                                                             datetime.datetime.now())).all()
+                                                             datetime.datetime.now())).order_by("-created_date")
         self.serializer_class = GetVizitSerializer
         return super(VizitCreateAPI, self).list(request, *args, **kwargs)

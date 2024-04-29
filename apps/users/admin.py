@@ -4,8 +4,10 @@ from django.contrib.auth.admin import UserAdmin
 
 from apps.users.forms import CustomUserChangeForm, CustomUserCreationForm
 from apps.users.models import User, District, Location, City, Doctor, AgreeDoctor, Hospital, OrderExcel, Debit, Income, \
-    Pharmacy, MobileLocation, Version
+    Pharmacy, MobileLocation, Version,Appmobile
 
+
+admin.site.register(Appmobile)
 
 class CustomUserAdmin(UserAdmin):
     add_form = CustomUserCreationForm

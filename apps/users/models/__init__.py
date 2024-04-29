@@ -4,7 +4,17 @@ from django.db import models
 from django.utils import timezone
 
 
+
 # from apps.hospital.models import Hospital
+class Appmobile(models.Model):
+    version = models.CharField("Version", max_length=15)
+    app = models.FileField(upload_to="app")
+
+    def __str__(self):
+        return self.version
+
+    class Meta:
+        verbose_name = "Mobile APP"
 
 
 class CustomUserManager(BaseUserManager):
@@ -133,7 +143,7 @@ class Location(models.Model):
 class MobileLocation(models.Model):
     lan = models.CharField(max_length=255)
     lat = models.CharField(max_length=255)
-    created_at = models.DateTimeField(auto_now=True)
+    created_at = models.DateTimeField()
     created_by = models.ForeignKey(User, on_delete=models.CASCADE, related_name='user_mobile_location')
     district = models.ForeignKey(District, on_delete=models.CASCADE, related_name='district_mobile_location')
 

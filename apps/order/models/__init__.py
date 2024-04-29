@@ -1,6 +1,9 @@
 from django.db import models
 from apps.product.models import Product
 from apps.users.models import User, District
+from django.db.models.signals import post_save
+from django.dispatch import receiver
+from telegram import Bot
 
 
 class ObjectsOrderManager(models.Manager):
@@ -37,6 +40,25 @@ class Order(models.Model):
 
     def __str__(self):
         return f"Total: {self.total_price} inn: {self.inn}"
+    
+import telebot
+bot = telebot.TeleBot("5562028031:AAHhwjOM66h1ZKZxfq3naS77PZwq7_3a7BM")
+
+@receiver(post_save, sender=Order)
+def send_telegram_notification(sender, instance, created, **kwargs):
+    if created or instance.status == 'office_manager':
+        office_managers = User.objects.filter(role='office_manager', is_active=True)
+        chat_ids = [user.chat_id for user in office_managers if user.chat_id]
+        
+        message = f"Dorixona nomi : {instance.inn}\n" \
+          f"Izoh: {instance.comment}\n" \
+          f"Jami summa: {instance.total_price}\n" \
+          f"Viloyat: {instance.district.name}\n" \
+          f"Buyurtma beruvchi F.I.O : {instance.seller.first_name} {instance.seller.last_name}\n"
+        
+        # Send messages synchronously
+        for chat_id in chat_ids:
+            bot.send_message(chat_id=chat_id, text=message)
 
 
 class OrderItem(models.Model):

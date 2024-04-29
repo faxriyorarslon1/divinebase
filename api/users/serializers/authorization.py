@@ -143,11 +143,35 @@ class UserVizitSerializer(serializers.ModelSerializer):
 
 class UserDistrictVizitSerializer(serializers.ModelSerializer):
 
+    # def to_representation(self, instance: User):
+    #     data = super(UserDistrictVizitSerializer, self).to_representation(instance)
+    #     data['user_vizit'] = UserVizitSerializer(instance.user_vizit, many=True).data
+    #     data['count'] = len(data['user_vizit'])
+    #     return data
     def to_representation(self, instance: User):
         data = super(UserDistrictVizitSerializer, self).to_representation(instance)
-        data['user_vizit'] = UserVizitSerializer(instance.user_vizit, many=True).data
-        data['count'] = len(data['user_vizit'])
+        start_date = self.context.get('start_date')
+        end_date = self.context.get('end_date')
+
+        if start_date and end_date:
+            user_vizit = Vizit.objects.filter(user=instance, created_date__range=(start_date, end_date))
+            data['user_vizit'] = UserVizitSerializer(user_vizit, many=True).data
+            data['count'] = len(data['user_vizit'])
+        else:
+            data['user_vizit'] = []
+            data['count'] = 0
+
         return data
+
+    class Meta:
+        model = User
+        fields = [
+            'id',
+            'first_name',
+            'last_name',
+            'district',
+            # 'user_vizit'
+        ]
 
     class Meta:
         model = User

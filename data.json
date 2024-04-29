@@ -1,0 +1,47 @@
+{
+    "CompanyInn": "200238963",
+    "Pinfl": null,
+    "CompanyName": "\"BIG-FAMILY-PHARM\" MCHJ",
+    "CompanyAddress": "Furqat ko'chasi 24-uy  ",
+    "PhoneNumber": null,
+    "Email": null,
+    "VatCode": "303010003125",
+    "SpecialAccount": "20208000400185448001",
+    "Accounts": [
+        {
+            "BankName": "\u0422\u041e\u0428\u041a\u0415\u041d\u0422 \u0428., \"\u0422\u0420\u0410\u0421\u0422\u0411\u0410\u041d\u041a\" \u0425\u0410 \u0411\u0410\u041d\u041a\u0418\u041d\u0418\u041d\u0413 \u0411\u041e\u0428 \u041e\u0424\u0418\u0421\u0418",
+            "BankMfo": "00491",
+            "AccountCode": "20208000400185448001",
+            "IsPrimary": true
+        }
+    ],
+    "DirectorInn": "425000703",
+    "DirectorPinfl": "30702801230053",
+    "DirectorName": "RASULOV XURSHIDBEK RUSTAMOVICH",
+    "Accountant": "RAZAKOV ELDOR IBRAXIMOVICH",
+    "Oked": "47730",
+    "TaxGap": null,
+    "TaxPayerTypeName": "\u041f\u043b\u0430\u0442\u0435\u043b\u044c\u0449\u0438\u043a \u041d\u0414\u0421+ (\u0441\u0435\u0440\u0442\u0438\u0444\u0438\u043a\u0430\u0442 \u0430\u043a\u0442\u0438\u0432\u043d\u044b\u0439)",
+    "Branches": [
+        {
+            "Id": 1,
+            "Name": "Akmal farm (shaxobcha \u211643)",
+            "Code": "00048"
+        },
+        {
+            "Id": 2,
+            "Name": "Akmal farm (shaxobcha \u211641)",
+            "Code": "00047"
+        },
+        {
+            "Id": 3,
+            "Name": "Akmal farm (shaxobcha \u211642)",
+            "Code": "00046"
+        },
+        {
+            "Id": 4,
+            "Name": "Akmal farm (Shaxobcha #19)",
+            "Code": "00024"
+        }
+    ]
+}

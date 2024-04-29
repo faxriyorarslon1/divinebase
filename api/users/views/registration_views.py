@@ -11,6 +11,7 @@ from rest_framework.permissions import AllowAny
 from rest_framework.response import Response
 from rest_framework.viewsets import ModelViewSet
 from rest_framework.authtoken.models import Token
+from apps.vizit.models import Vizit
 
 from DivineBase.settings import MEDIA_ROOT
 from api.users.serializers.authorization import RegistrationSerializer, LoginUserSerializer, \
@@ -144,11 +145,29 @@ class UserModelViewSet(ModelViewSet):
         )
 
     @action(methods=['get'], detail=False)
+    # def user_district_vizit(self, request, *args, **kwargs):
+    #     district = self.request.query_params.get("district")
+    #     queryset = User.objects.filter(district=district).all()
+    #     serializer = UserDistrictVizitSerializer(queryset, many=True)
+    #     return Response(serializer.data)
     def user_district_vizit(self, request, *args, **kwargs):
+        from rest_framework import status
         district = self.request.query_params.get("district")
+        start_date_str = self.request.query_params.get("start")
+        end_date_str = self.request.query_params.get("end")
+
+        if not start_date_str or not end_date_str:
+            return Response({"error": "Start and end dates are required in the headers."},
+                            status=status.HTTP_400_BAD_REQUEST)
+
+        start_date = datetime.strptime(start_date_str, '%Y-%m-%d')
+        end_date = datetime.strptime(end_date_str, '%Y-%m-%d')
+
         queryset = User.objects.filter(district=district).all()
-        serializer = UserDistrictVizitSerializer(queryset, many=True)
-        return Response(serializer.data)
+        serializer = UserDistrictVizitSerializer(queryset, many=True,
+                                                 context={'start_date': start_date, 'end_date': end_date})
+
+        return Response(serializer.data, status=status.HTTP_200_OK)
 
     @action(methods=["post"], detail=False)
     def user_exist(self, request):
@@ -277,7 +296,8 @@ class RegistrationModelViewSet(ModelViewSet):
     def village_agent_manager(self, request):
         role = self.request.query_params.get('role')
         village = self.request.query_params.get('village')
-        queryset = User.objects.filter(role=role, district=village)
+        queryset = User.objects.filter(district=village)
+        # queryset = User.objects.filter(role=role, district=village)
         serializer = VillageSerializer(queryset, many=True)
         return Response(serializer.data)
 

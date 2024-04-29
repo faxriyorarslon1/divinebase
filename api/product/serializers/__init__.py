@@ -108,7 +108,7 @@ class ProductCreateSerializer(serializers.ModelSerializer):
     expired_date = serializers.CharField()
     seria = serializers.CharField()
     active = serializers.BooleanField()
-    image = serializers.CharField(required=False)
+    # image = serializers.CharField(required=False)
     image_mobile = serializers.ImageField(required=False)
 
     class Meta:
@@ -123,7 +123,7 @@ class ProductCreateSerializer(serializers.ModelSerializer):
             "expired_date",
             "seria",
             "active",
-            "image",
+            # "image",
             'warehouse_count',
             'image_mobile'
         ]
